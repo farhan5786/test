@@ -1,0 +1,115 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* Desktop Background */
+.desktop {
+  width: 100%;
+  height: 100vh;
+  background: url('mc os.png') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: background 0.3s;
+}
+
+/* Dark Mode */
+.dark-mode {
+  background: #2d2d2d;
+  color: white;
+}
+
+/* App Icons on Desktop */
+.app-icons {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.app-icon {
+  text-align: center;
+  color: white;
+}
+
+.app-icon img {
+  width: 50px;
+  height: 50px;
+  transition: transform 0.2s;
+}
+
+.app-icon img:hover {
+  transform: scale(1.1);
+}
+
+/* Dock Styling */
+.dock {
+  display: flex;
+  gap: 25px;
+  padding: 10px;
+  background: transparent;
+  border-radius: 20px;
+  border: 1px solid black;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dock-icon img {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.dock-icon:active {
+  transform: scale(0.97);
+}
+
+/* App Window Styling */
+.app-window {
+  display: none;
+  position: fixed;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  height: 50%;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.app-window header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: #eee;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.app-window main {
+  padding: 20px;
+}
+
+/* Settings App Styling */
+#settings select, #settings input {
+  margin-top: 10px;
+  padding: 5px;
+  font-size: 14px;
+}
+
+#settings h3 {
+  margin-top: 20px;
+}

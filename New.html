@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar with Search and Sign Up</title>
+  <link rel="stylesheet" type="text/css" href="New.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <a href="javascript:void(0)" class="navbar-left">MyWeb</a>
+
+    <!-- Search bar in the center -->
+    <div class="navbar-center">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search..." />
+        <button onclick="searchData()">Search</button>
+      </div>
+    </div>
+
+    <!-- Links on the right side -->
+    <div class="navbar-right">
+      <a href="javascript:void(0)" onclick="openSignUpForm()">Sign Up</a>
+      <a href="javascript:void(0)">Login</a>
+    </div>
+  </nav>
+
+  <!-- Search Results -->
+  <div id="searchResults" class="result"></div>
+
+  <!-- Sign Up Popup -->
+  <div id="signUpPopup" class="popup">
+    <div class="popup-content">
+      <h3>Sign Up</h3>
+      <button onclick="toggleLoginRegister('login')">Login</button>
+      <button onclick="toggleLoginRegister('register')">Register</button>
+      <div id="signUpForm">
+        <h4>Register</h4>
+        <input type="text" id="fullName" placeholder="Full Name" />
+        <input type="email" id="email" placeholder="Email" />
+        <input type="password" id="password" placeholder="Password" />
+        <button onclick="submitSignUpForm()">Submit</button>
+      </div>
+    </div>
+  </div>
+<script src="New.js"></script>
+</body>
+</html>
+ ㅤ

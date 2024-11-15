@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 11 Simulation</title>
+    <style>
+        /* Reset and General Styling */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: black; overflow: hidden; }
+
+        /* Screen Styling */
+        .screen { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; opacity: 1; visibility: visible; transition: opacity 1s, visibility 1s; }
+        .hidden { opacity: 0; visibility: hidden; }
+
+        /* MSI Boot Screen */
+        #msi-screen { background: black; }
+        #msi-screen img { width: 200px; }
+        .msi-loader { margin-top: 20px; width: 100px; height: 10px; background: #333; border-radius: 5px; overflow: hidden; position: relative; }
+        .msi-loader div { width: 20px; height: 10px; background: red; position: absolute; animation: msiLoading 1s infinite; }
+        @keyframes msiLoading { from { left: -20px; } to { left: 100%; } }
+
+        /* Windows Boot Screen */
+        #win11-boot { background: black; }
+        #win11-boot img { width: 100px; margin-bottom: 20px; }
+        .circle-loader { width: 50px; height: 50px; border: 5px solid rgba(255, 255, 255, 0.3); border-top-color: white; border-radius: 50%; animation: spin 1s infinite linear; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Login Screen with Blurred Background */
+        #login-screen { position: relative; background: url('https://source.unsplash.com/random/1920x1080') no-repeat center/cover; }
+        .blur-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: inherit; filter: blur(8px); z-index: 1; }
+        .user-info { position: relative; z-index: 2; color: white; text-align: center; }
+        .user-info img { width: 100px; height: 100px; border-radius: 50%; }
+        .user-info h3 { margin: 10px 0; }
+        .user-loader { margin-top: 10px; width: 50px; height: 50px; border: 5px solid rgba(255, 255, 255, 0.3); border-top-color: white; border-radius: 50%; animation: spin 1s infinite linear; }
+
+        /* Desktop */
+        .desktop { display: none; background: url('https://source.unsplash.com/random/1920x1080') no-repeat center/cover; }
+        .taskbar { width: 100%; height: 50px; background-color: rgba(0, 0, 0, 0.7); position: absolute; bottom: 0; display: flex; align-items: center; padding: 0 10px; }
+        .start-menu-btn { width: 40px; height: 40px; background: white; mask: url('https://upload.wikimedia.org/wikipedia/commons/8/8e/Windows_logo_-_2021.svg') no-repeat center; mask-size: cover; margin-right: 10px; cursor: pointer; }
+        .start-menu { position: absolute; bottom: 60px; left: 10px; width: 300px; height: 400px; background: rgba(30, 30, 50, 0.9); color: white; border-radius: 10px; display: none; flex-direction: column; padding: 10px; }
+        .start-menu.active { display: flex; }
+        .start-menu input { padding: 10px; border: none; outline: none; font-size: 1em; border-radius: 5px; margin-bottom: 10px; }
+        .start-menu ul { list-style: none; }
+        .start-menu ul li { padding: 5px; margin: 5px 0; cursor: pointer; }
+        .start-menu ul li:hover { background: rgba(255, 255, 255, 0.2); }
+    </style>
+</head>
+<body>
+    <!-- MSI Screen -->
+    <div id="msi-screen" class="screen">
+        <img src="https://via.placeholder.com/200x100?text=MSI+Logo" alt="MSI Logo">
+        <div class="msi-loader"><div></div></div>
+    </div>
+
+    <!-- Windows 11 Boot Screen -->
+    <div id="win11-boot" class="screen hidden">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Windows_logo_-_2021.svg" alt="Windows Logo">
+        <div class="circle-loader"></div>
+    </div>
+
+    <!-- Login Screen with Blurred Background -->
+    <div id="login-screen" class="screen hidden">
+        <div class="blur-overlay"></div>
+        <div class="user-info">
+            <img src="https://via.placeholder.com/100" alt="User">
+            <h3>John Doe</h3>
+            <div class="user-loader"></div>
+        </div>
+    </div>
+
+    <!-- Desktop -->
+    <div class="desktop">
+        <div class="taskbar">
+            <div class="start-menu-btn"></div>
+        </div>
+        <div class="start-menu">
+            <input type="text" placeholder="Search for apps">
+            <ul>
+                <li>App 1</li>
+                <li>App 2</li>
+                <li>App 3</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Screen Transition Timing
+        setTimeout(() => { document.getElementById('msi-screen').classList.add('hidden'); document.getElementById('win11-boot').classList.remove('hidden'); }, 2000);
+        setTimeout(() => { document.getElementById('win11-boot').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }, 5000);
+        setTimeout(() => { document.getElementById('login-screen').classList.add('hidden'); document.querySelector('.desktop').style.display = 'flex'; }, 7000);
+
+        // Start Menu Toggle
+        const startMenuBtn = document.querySelector('.start-menu-btn');
+        const startMenu = document.querySelector('.start-menu');
+        startMenuBtn.addEventListener('click', () => { startMenu.classList.toggle('active'); });
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <!-- Chatbot Container -->
+    <div class="chatbot">
+        <div id="messages-container" class="messages-container"></div>
+        <div class="input-container">
+            <input id="user-input" type="text" placeholder="Type a message...">
+            <button id="send-button">Send <i class='bx bx-send'></i></button>
+        </div>
+    </div>
+
+    <!-- Custom Warning Popup -->
+    <div id="popup-warning" class="popup-warning">
+        <div class="popup-content">
+            <p class="popup-message">⚠️ Warning: Inappropriate language detected. Please refrain from using offensive language.</p>
+            <button id="close-popup" class="popup-button">OK <i class='bx bx-window-close'></i></button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

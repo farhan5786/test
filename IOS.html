@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>macOS Web Replica</title>
+  <link rel="stylesheet" href="IOS.css">
+</head>
+<body>
+  <!-- Desktop Background -->
+  <div class="desktop" id="desktop">
+    
+    <!-- App Icons -->
+    <div class="app-icons">
+      <div class="app-icon" onclick="openApp('finder')">
+        <img src="finder.png" alt="Finder">
+        <span>Finder</span>
+      </div>
+      <div class="app-icon" onclick="openApp('safari')">
+        <img src="safari.png" alt="Safari">
+        <span>Safari</span>
+      </div>
+      <div class="app-icon" onclick="openApp('settings')">
+        <img src="setting.png" alt="Settings">
+        <span>Settings</span>
+      </div>
+    </div>
+    
+    <!-- Dock -->
+    <div class="dock">
+      <div class="dock-icon" onclick="openApp('finder')">
+        <img src="finder.png" alt="Finder">
+      </div>
+      <div class="dock-icon" onclick="openApp('safari')">
+        <img src="safari.png" alt="Safari">
+      </div>
+      <div class="dock-icon" onclick="openApp('settings')">
+        <img src="setting.png" alt="Settings">
+      </div>
+    </div>
+    
+    <!-- App Windows -->
+    <div class="app-window" id="finder">
+      <header>
+        <span>Finder</span>
+        <button onclick="closeApp('finder')">Close</button>
+      </header>
+      <main>
+        <p>Welcome to Finder!</p>
+      </main>
+    </div>
+    
+    <div class="app-window" id="safari">
+      <header>
+        <span>Safari</span>
+        <button onclick="closeApp('safari')">Close</button>
+      </header>
+      <main>
+        <p>Welcome to Safari!</p>
+      </main>
+    </div>
+    
+    <div class="app-window" id="settings">
+      <header>
+        <span>Settings</span>
+        <button onclick="closeApp('settings')">Close</button>
+      </header>
+      <main>
+        <h2>Settings</h2>
+        
+        <label for="theme-toggle">Theme:</label>
+        <select id="theme-toggle" onchange="toggleTheme()">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+
+        <h3>Change Desktop Wallpaper</h3>
+        <input type="file" id="wallpaper-upload" accept="image/*" onchange="changeWallpaper(event)">
+
+      </main>
+    </div>
+  </div>
+  
+  <script src="IOS.js"></script>
+</body>
+</html>

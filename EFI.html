@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Editor with Selectable Overlay</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f3f4f6;
+            user-select: none;
+        }
+
+        .container {
+            display: flex;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .sidebar {
+            padding: 20px;
+            background-color: #27272a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 250px;
+        }
+
+        .sidebar h2 {
+            font-size: 24px;
+            color: #38bdf8;
+        }
+
+        /* Custom file upload button */
+        .custom-file-upload {
+            display: block;
+            padding: 10px;
+            color: #fff;
+            background-color: #38bdf8;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #0284c7;
+        }
+
+        /* Hide default file inputs */
+        #upload, #overlay-upload {
+            display: none;
+        }
+
+        /* Image Editor */
+        .editor {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 600px;
+            height: 600px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .sidebar input[type="range"] {
+            width: 100%;
+        }
+
+        .sidebar button {
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            background-color: #38bdf8;
+            color: #fff;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .sidebar button:hover {
+            background-color: #0284c7;
+        }
+
+        /* Black border for selected overlay */
+        .selected-overlay {
+            border: 3px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Photo Editor</h2>
+            <label for="upload" class="custom-file-upload">Choose Main Image</label>
+            <input type="file" id="upload" accept="image/*">
+            <label for="overlay-upload" class="custom-file-upload">Choose Overlay Image</label>
+            <input type="file" id="overlay-upload" accept="image/*">
+            
+            <div class="controls">
+                <label>Brightness</label>
+                <input type="range" id="brightness" min="0" max="200" value="100">
+                <label>Contrast</label>
+                <input type="range" id="contrast" min="0" max="200" value="100">
+                <label>Saturation</label>
+                <input type="range" id="saturation" min="0" max="200" value="100">
+                <label>Grayscale</label>
+                <input type="range" id="grayscale" min="0" max="100" value="0">
+                <button id="reset">Reset</button>
+                <button id="download">Download</button>
+            </div>
+        </div>
+        <div class="editor" id="editor">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const upload = document.getElementById('upload');
+        const overlayUpload = document.getElementById('overlay-upload');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const brightness = document.getElementById('brightness');
+        const contrast = document.getElementById('contrast');
+        const saturation = document.getElementById('saturation');
+        const grayscale = document.getElementById('grayscale');
+        const resetBtn = document.getElementById('reset');
+        const downloadBtn = document.getElementById('download');
+        const editor = document.getElementById('editor');
+
+        let mainImage = new Image();
+        let overlayImage = new Image();
+        let overlaySelected = false;
+        let originalImageData;
+
+        // Load main image
+        upload.addEventListener('change', () => {
+            const file = upload.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    mainImage.src = reader.result;
+                    mainImage.onload = () => {
+                        canvas.width = mainImage.width;
+                        canvas.height = mainImage.height;
+                        ctx.drawImage(mainImage, 0, 0);
+                        originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Load overlay image
+        overlayUpload.addEventListener('change', () => {
+            const file = overlayUpload.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    overlayImage.src = reader.result;
+                    overlayImage.onload = () => {
+                        overlaySelected = true;
+                        drawImages();
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Apply filters and overlay
+        const applyFilters = () => {
+            ctx.putImageData(originalImageData, 0, 0);
+            ctx.filter = `
+                brightness(${brightness.value}%)
+                contrast(${contrast.value}%)
+                saturate(${saturation.value}%)
+                grayscale(${grayscale.value}%)
+            `;
+            ctx.drawImage(mainImage, 0, 0);
+            drawOverlay();
+        };
+
+        // Draw main and overlay images with selection effect
+        const drawImages = () => {
+            ctx.drawImage(mainImage, 0, 0);
+            drawOverlay();
+        };
+
+        // Draw overlay with selection border if selected
+        const drawOverlay = () => {
+            if (overlayImage.src) {
+                if (overlaySelected) {
+                    ctx.save();
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = 'black';
+                    ctx.strokeRect(50, 50, overlayImage.width / 2, overlayImage.height / 2);
+                    ctx.restore();
+                }
+                ctx.drawImage(overlayImage, 50, 50, overlayImage.width / 2, overlayImage.height / 2);
+            }
+        };
+
+        // Toggle overlay selection on click
+        editor.addEventListener('click', (event) => {
+            const x = event.offsetX;
+            const y = event.offsetY;
+            const overlayX = 50;
+            const overlayY = 50;
+            const overlayWidth = overlayImage.width / 2;
+            const overlayHeight = overlayImage.height / 2;
+
+            // Check if click is within overlay image bounds
+            if (
+                x >= overlayX && x <= overlayX + overlayWidth &&
+                y >= overlayY && y <= overlayY + overlayHeight
+            ) {
+                overlaySelected = !overlaySelected; // Toggle selection
+                drawImages();
+            }
+        });
+
+        [brightness, contrast, saturation, grayscale].forEach(control => {
+            control.addEventListener('input', applyFilters);
+        });
+
+        // Reset filters and overlay
+        resetBtn.addEventListener('click', () => {
+            brightness.value = 100;
+            contrast.value = 100;
+            saturation.value = 100;
+            grayscale.value = 0;
+            overlayImage.src = ""; // Clear overlay
+            overlaySelected = false;
+            applyFilters();
+        });
+
+        // Download the edited image
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'edited-photo.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    </script>
+</body>
+</html>

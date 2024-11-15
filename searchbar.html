@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google.com</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            font-size: 16px;
+            border: none;
+            border-radius: 24px;
+            outline: none;
+            background-color: #ccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Light shadow for clarity */
+        }
+
+        #input:focus {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slightly deeper shadow on focus */
+            background-color: #ddd;
+        }
+
+        #input::placeholder {
+            color: #666;
+        }
+
+        .icon-left {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        /* Suggestions box */
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            max-height: 200px;
+            overflow-y: auto;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for suggestions */
+            z-index: 1000;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background-color: #CCC;
+            transition: 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <i class="fas fa-search icon-left"></i>
+        <input id="input" type="search" autocomplete="off" spellcheck="false" placeholder="Search Google or type a URL
+
+">
+        <div class="suggestions" id="suggestions"></div>
+    </div>
+
+    <script>
+        const input = document.getElementById('input');
+        const suggestionsBox = document.getElementById('suggestions');
+
+        // Predefined suggestion data with links
+const suggestionData = [
+    { text: "Google", link: "https://www.google.com" },
+    { text: "Google Maps", link: "https://maps.google.com" },
+    { text: "Google Drive", link: "https://drive.google.com" },
+    { text: "Google Docs", link: "https://docs.google.com" },
+    { text: "Google Sheets", link: "https://sheets.google.com" },
+    { text: "Google Slides", link: "https://slides.google.com" },
+    { text: "Google Photos", link: "https://photos.google.com" },
+    { text: "Google Calendar", link: "https://calendar.google.com" },
+    { text: "Google Translate", link: "https://translate.google.com" },
+    { text: "Google News", link: "https://news.google.com" },
+    { text: "Gmail", link: "https://mail.google.com" },
+    { text: "YouTube", link: "https://www.youtube.com" },
+    { text: "Google Play Store", link: "https://play.google.com" },
+    { text: "Google Books", link: "https://books.google.com" },
+    { text: "Google Scholar", link: "https://scholar.google.com" },
+    { text: "Google Ads", link: "https://ads.google.com" },
+    { text: "Google Analytics", link: "https://analytics.google.com" },
+    { text: "Google My Business", link: "https://www.google.com/business" },
+    { text: "Google Shopping", link: "https://www.google.com/shopping" },
+    { text: "Google Trends", link: "https://trends.google.com" },
+    { text: "Google Finance", link: "https://www.google.com/finance" },
+    { text: "Google Flights", link: "https://www.google.com/flights" },
+    { text: "Google Earth", link: "https://earth.google.com" },
+    { text: "Google Images", link: "https://images.google.com" },
+    { text: "Google Assistant", link: "https://assistant.google.com" },
+    { text: "Google Cloud", link: "https://cloud.google.com" },
+    { text: "Google Developers", link: "https://developers.google.com" },
+    { text: "Google Classroom", link: "https://classroom.google.com" },
+    { text: "Google Forms", link: "https://forms.google.com" },
+    { text: "Apple", link: "https://www.apple.com" },
+    { text: "YouTube", link: "https://www.youtube.com" },
+    { text: "Amazon", link: "https://www.amazon.com" },
+    { text: "Android", link: "https://www.android.com" },
+    { text: "Artificial Intelligence", link: "https://en.wikipedia.org/wiki/Artificial_intelligence" },
+    { text: "Facebook", link: "https://www.facebook.com" },
+    { text: "Angular", link: "https://angular.io" },
+    { text: "Mr Bluestacks", link: "https://www.mrbluestacks.xyz" },
+    { text: "Bluestacks", link: "https://www.bluestacks.com/bluestacks-5.html" },
+    { text: "MSI App Player", link: "https://www.msi.com/Landing/appplayer" },
+    { text: "MSI Global", link: "https://www.msi.com/index.php" },
+    { text: "Star Tech", link: "https://www.startech.com.bd/" },
+    { text: "Microsoft", link: "https://www.microsoft.com" },
+    { text: "Dell", link: "https://www.dell.com" },
+    { text: "Lenovo", link: "https://www.lenovo.com" },
+    { text: "HP", link: "https://www.hp.com" },
+    { text: "Intel", link: "https://www.intel.com" },
+    { text: "NVIDIA", link: "https://www.nvidia.com" },
+    { text: "AMD", link: "https://www.amd.com" },
+    { text: "Razer", link: "https://www.razer.com" },
+    { text: "Asus", link: "https://www.asus.com" },
+    { text: "Samsung", link: "https://www.samsung.com" },
+    { text: "Acer", link: "https://www.acer.com" },
+    { text: "Twitter", link: "https://www.twitter.com" },
+    { text: "Reddit", link: "https://www.reddit.com" },
+    { text: "Stack Overflow", link: "https://stackoverflow.com" },
+    { text: "GitHub", link: "https://www.github.com" },
+    { text: "Twitch", link: "https://www.twitch.tv" },
+    { text: "LinkedIn", link: "https://www.linkedin.com" },
+    { text: "Wikipedia", link: "https://www.wikipedia.org" },
+    { text: "Mozilla Firefox", link: "https://www.mozilla.org/firefox" },
+    { text: "Opera Browser", link: "https://www.opera.com" },
+    { text: "Ubuntu", link: "https://ubuntu.com" },
+    { text: "StarTech", link: "https://www.startech.com.bd/" },
+    { text: "UCC (United Computer Center)", link: "https://www.ucc-bd.com/" },
+    { text: "Computer Source", link: "https://www.computersource.com.bd/" },
+    { text: "Ryans Computers", link: "https://www.ryanscomputers.com/" },
+    { text: "Desh Computer", link: "https://www.deshcomputer.com/" },
+    { text: "Global Brand Pvt. Ltd.", link: "https://www.globalbrand.com.bd/" },
+    { text: "Othoba", link: "https://www.othoba.com/" },
+    { text: "IT World", link: "https://www.itworldbd.com/" },
+    { text: "Computers & Accessories", link: "https://www.computeraccessoriesbd.com/" },
+    { text: "DHL Express (for delivery of computers)", link: "https://www.dhl.com/bd-en/home.html" },
+    { text: "LDPlayer", link: "https://www.ldplayer.net/" },
+    { text: "NoxPlayer", link: "https://www.bignox.com/" },
+    { text: "Memu Play", link: "https://www.memuplay.com/" },
+    { text: "Gameloop", link: "https://www.gameloop.com/" },
+    { text: "Andy Android Emulator", link: "https://www.andyroid.net/" },
+    { text: "Koplayer", link: "https://www.koplayer.com/" },
+    { text: "Genymotion", link: "https://www.genymotion.com/" },
+    { text: "BlueStacks 5", link: "https://www.bluestacks.com/bluestacks-5.html" },
+    { text: "ARChon", link: "https://archon-runtime.github.io/" },
+    { text: "Phoenix OS", link: "http://www.phoenixos.com/en/" },
+    { text: "PrimeOS", link: "https://www.primeos.in/" },
+    { text: "Bliss OS", link: "https://blissos.org/" },
+    { text: "Xamarin Android Player", link: "https://www.xamarin.com/" },
+    { text: "Android Studio Emulator", link: "https://developer.android.com/studio" },
+    { text: "Live Cricket", link: "https://www.google.com/search?q=live+cricket&sca_esv=281e988bd194038a&sxsrf=ADLYWIJWV2OZR9Esz_Jd6ek6VNI4lHgACQ%3A1731592011503&ei=S_81Z9u6HuCO4-EPp8iI0Ak&ved=0ahUKEwibjPf1-tuJAxVgxzgGHSckApoQ4dUDCA8&uact=5&oq=live+cricket&gs_lp=Egxnd3Mtd2l6LXNlcnAiDGxpdmUgY3JpY2tldDIHECMYsAMYJzIHECMYsAMYJzIHECMYsAMYJzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYRzIKEAAYsAMY1gQYR0idC1AAWABwAngBkAEAmAEAoAEAqgEAuAEDyAEAmAICoAIamAMAiAYBkAYKkgcBMqAHAA&sclient=gws-wiz-serp" },
+    { text: "Stylo", link: "https://stylo.com.bd/" },
+    { text: "StyleUp", link: "https://www.styleup.com.bd/" },
+    { text: "Fashion Style", link: "https://fashionstylebd.com/" },
+    { text: "Trendsetters BD", link: "https://trendsettersbd.com/" },
+    { text: "Tictak", link: "https://www.tictak.com.bd/" },
+    { text: "Stylist.com.bd", link: "https://www.stylist.com.bd/" },
+    { text: "DressUp", link: "https://www.dressup.com.bd/" },
+    { text: "Style Bazaar", link: "https://stylebazaarbd.com/" },
+    { text: "Fashion House BD", link: "https://fashionhousebd.com/" },
+    { text: "Wardrobe BD", link: "https://www.wardrobebd.com/" }
+    { text: "style name", link: "https://www.google.com/search?q=style+name&oq=st&gs_lcrp=EgZjaHJvbWUqDggAEEUYJxg7GIAEGIoFMg4IABBFGCcYOxiABBiKBTIOCAEQRRgnGDsYgAQYigUyBggCEEUYQDIGCAMQRRg5MgoIBBAAGLEDGIAEMhAIBRAuGMcBGLEDGNEDGIAEMgoIBhAAGLEDGIAEMgcIBxAAGIAE0gEJMTAyNWowajE1qAIIsAIB&sourceid=chrome&ie=UTF-8"},
+];
+
+        // Display matching suggestions
+        input.addEventListener('input', () => {
+            const searchText = input.value.toLowerCase();
+            suggestionsBox.innerHTML = ''; // Clear previous suggestions
+
+            if (searchText) {
+                const filteredSuggestions = suggestionData.filter(item => 
+                    item.text.toLowerCase().includes(searchText)
+                );
+
+                filteredSuggestions.forEach(suggestion => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.classList.add('suggestion-item');
+                    suggestionItem.textContent = suggestion.text;
+
+                    // Add click event to open the link in a new tab
+                    suggestionItem.addEventListener('click', () => {
+                        window.open(suggestion.link, '_blank'); // Opens the link in a new tab
+                        suggestionsBox.innerHTML = ''; // Clear suggestions
+                    });
+
+                    suggestionsBox.appendChild(suggestionItem);
+                });
+            }
+        });
+
+        // Hide suggestions when input loses focus
+        input.addEventListener('blur', () => {
+            setTimeout(() => { suggestionsBox.innerHTML = ''; }, 100);
+        });
+    </script>
+</body>
+</html>
